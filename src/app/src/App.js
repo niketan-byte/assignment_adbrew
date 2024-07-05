@@ -137,7 +137,7 @@ function App() {
 
     try {
       const response = await axios.post('http://localhost:8000/todos/', {
-        todo: newTodo
+        description: newTodo
       });
 
       if (response.status === 201) {
