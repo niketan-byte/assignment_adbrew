@@ -1,6 +1,11 @@
 import os
+import logging
 from pymongo import MongoClient
 from abc import ABC, abstractmethod
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class TodoService(ABC):
     @abstractmethod
@@ -9,6 +14,10 @@ class TodoService(ABC):
 
     @abstractmethod
     def create_todo(self, data):
+        pass
+
+    @abstractmethod
+    def delete_all_todos(self):
         pass
 
 class MongoTodoService(TodoService):
@@ -25,5 +34,10 @@ class MongoTodoService(TodoService):
         return todo_list
 
     def create_todo(self, data):
-        result = self.db['todo_collection'].insert_one(data)
+        description = data.get('description', 'No description')  # Ensure description is extracted correctly
+        logger.debug(f"Creating TODO with description: {description}")
+        result = self.db['todo_collection'].insert_one({'description': description})
         return result
+    
+    def delete_all_todos(self):
+        self.db['todo_collection'].delete_many({})
